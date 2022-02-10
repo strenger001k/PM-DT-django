@@ -11,7 +11,7 @@ def index(request):
                         "<p>3. <a href=all_cards>Детальная информация о карточках</a></p>"
                         "<p>4. Для перехода на определенную карточку пропишите в адресной строке "
                         "<code style='font-size: 15px;'><b>/card/pk</b></code>  (где <code>pk</code> номер нужной карточка)"
-                        "<h4>Пример: <code style='font-size: 15px;'><a href='/card/2'>http://127.0.0.1:8000/card/2</a></code></h4></p>")
+                        "<h4>Пример: <code style='font-size: 15px;'><a href='/card/1'>http://127.0.0.1:8000/card/2</a></code></h4></p>")
 
 
 class AllObjectViewSet(APIView):
