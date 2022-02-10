@@ -3,7 +3,6 @@ from .models import Сategory, Product
 
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = Product
         fields = ('id',
@@ -18,7 +17,6 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
 class CardSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True)
-
     class Meta:
         model = Сategory
         fields = ('id', 'name', 'products',)
@@ -26,7 +24,6 @@ class CardSerializer(serializers.ModelSerializer):
 
 class SubGroupSerializer(serializers.ModelSerializer):
     children = CardSerializer(many=True, required=False)
-
     class Meta:
         model = Сategory
         fields = ('id', 'name', 'children',)
@@ -34,7 +31,6 @@ class SubGroupSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     children = SubGroupSerializer(many=True, required=False)
-
     class Meta:
         model = Сategory
         fields = ('id', 'name', 'children',)
@@ -42,7 +38,6 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class SectionSerializer(serializers.ModelSerializer):
     children = GroupSerializer(many=True, required=False)
-
     class Meta:
         model = Сategory
         fields = ('id', 'name', 'children',)
@@ -50,7 +45,6 @@ class SectionSerializer(serializers.ModelSerializer):
 
 class СategorySerializer(serializers.ModelSerializer):
     children = SectionSerializer(many=True, required=False)
-
     class Meta:
         model = Сategory
         fields = ('id', 'name', 'description', 'children',)
