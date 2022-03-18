@@ -13,7 +13,7 @@ class AllChatsSerializer(serializers.ModelSerializer):
     chat_messages = AllMessegesSerializer(many=True)
     class Meta:
         model = Chat
-        fields = ['user_name', 'chat_id', 'chat_messages']
+        fields = ['user_name', 'chat_id', 'get_online', 'chat_messages', ]
 
 
 class LoginUsesSerializer(serializers.ModelSerializer):
