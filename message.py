@@ -15,7 +15,8 @@ MAIN_MENU = f'1. {Fore.BLUE + Style.BRIGHT}Create chat\n{Style.RESET_ALL}'\
 ERROR = Fore.RED + Style.BRIGHT + 'ERROR'
 INTEGER_NUMBER = Fore.RED + Style.BRIGHT + 'ENTER INTEGER NUMEBR!!!'
 EXIT = Fore.RED + Style.BRIGHT + 'EXIT'
-KEYBOARD_ALT = Fore.RED + Style.BRIGHT + "press ALT to exit\n"
+KEYBOARD_ALT = Fore.RED + Style.BRIGHT + "hold ALT to exit\n"
+CONSOL_QUIT = Fore.RED + Style.BRIGHT + "print \'QUIT' to exit\n"
 
 
 SIGNIN = Fore.BLUE + Style.BRIGHT + "SIGN IN"
@@ -30,7 +31,7 @@ LIST_USERS = Fore.GREEN + Style.BRIGHT + 'LIST OF USERS'
 CHOOSE_CHAT = 'CHOOSE CHAT: '
 
 GET_NAME = 'Enter name: '
-GET_MESSAGE = 'Enter text: '
+GET_MESSAGE = 'Enter text message for ' + Fore.CYAN + Style.BRIGHT + '{}' + ': '
 GER_LOGIN = 'login: '
 GET_PASSWORD = 'pass: '
 
@@ -55,7 +56,7 @@ def print_message(message, name):
 
 def print_chats(chats):
     for count, chat in enumerate(chats):
-        print(f"{count+1}. Chat with {Fore.CYAN + Style.BRIGHT}{chat['user_name']} "\
+        print(f"{count+1}. Chat with {Fore.CYAN + Style.BRIGHT}{chat['user_name']} "
               f"{chat['get_online']}")
 
 

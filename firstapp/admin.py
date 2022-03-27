@@ -13,6 +13,7 @@ class StateAdmin(admin.ModelAdmin):
 class StateAdmin(admin.ModelAdmin):
     list_display = ('user_name', 'chat_id', 'users',)
 
+
 @admin.register(User)
 class StateAdmin(admin.ModelAdmin):
     list_display = ('login', 'password', 'online')

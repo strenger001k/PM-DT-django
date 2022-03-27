@@ -4,8 +4,8 @@ from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Messege, User, Chat
-from .serializers import AllMessegesSerializer, LoginUsesSerializer, AllChatsSerializer # методы для API
-from django.http import HttpResponseNotFound, JsonResponse
+from .serializers import AllMessegesSerializer, LoginUsersSerializer, AllChatsSerializer, AllUsersSerializer  # методы для API
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 
@@ -28,18 +28,20 @@ class AllMessegeViewSet(APIView):
 
     def post(self, request):
         data = request.data
-        chat_sender = Chat.objects.get(chat_id=data['chat_id'], user_name=data['sender_name'])
+        chat_sender = Chat.objects.get(chat_id=data['chat_id'],
+                                       user_name=data['sender_name'])
         if chat_sender:
-            chat_receiver = Chat.objects.get(chat_id=data['chat_id'], user_name=data['name'])
+            chat_receiver = Chat.objects.get(chat_id=data['chat_id'],
+                                             user_name=data['name'])
             new_message_sender = Messege.objects.create(name=data['name'],
                                                         message=data['message'],
                                                         time_messege=timezone.now(),
-                                                        message_chat = chat_sender)
+                                                        message_chat=chat_sender)
 
             new_message_receiver = Messege.objects.create(name=data['name'],
                                                           message=data['message'],
                                                           time_messege=timezone.now(),
-                                                          message_chat = chat_receiver)
+                                                          message_chat=chat_receiver)
             new_message_sender.save()
             new_message_receiver.save()
 
@@ -52,41 +54,47 @@ class SignUpViewSet(APIView):
     def post(self, request):
         data = request.data
         if User.objects.filter(login=data['login']).exists():
-             return HttpResponseNotFound('login exists')
+            return HttpResponseNotFound('login exists')
         else:
             new_user = User.objects.create(login=data['login'],
-                                           password=data['password'],
-                        )
+                                           password=data['password'])
             new_user.save()
         return Response(status=status.HTTP_201_CREATED)
 
 
 class AllUserViewSet(APIView):
     def get(self, request):
-        queryset = User.objects.all()
-        serializer_class = LoginUsesSerializer(queryset, many=True)
-        return Response(serializer_class.data)
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                queryset = User.objects.all()
+                serializer_class = LoginUsersSerializer(queryset, many=True)
+                return Response(serializer_class.data)
+            else:
+                return HttpResponse(f'<h1><center>/*TEXT*/</center></h1>')
+        else:
+            return HttpResponse(f'<h1><center>/*TEXT*/</center></h1>')
 
     def post(self, request):
         data = request.data
-        user_login = get_object_or_404(User, login=data['name'], password=data['pass'])
+        user_login = get_object_or_404(User, login=data['name'],
+                                       password=data['pass'])
         if user_login:
             user_login.online = True
             user_login.save()
-            serializer_class = LoginUsesSerializer(user_login)
+            serializer_class = LoginUsersSerializer(user_login)
             return Response(serializer_class.data)
 
 
 class LogOutView(APIView):
     def post(self, request):
         data = request.data
-        user_login = get_object_or_404(User, login=data['name'], password=data['pass'])
+        user_login = get_object_or_404(User, login=data['name'],
+                                       password=data['pass'])
         if user_login:
             user_login.online = False
             user_login.save()
-            serializer_class = LoginUsesSerializer(user_login)
+            serializer_class = LoginUsersSerializer(user_login)
             return Response(serializer_class.data)
-
 
 
 def uniq_chat_id(id):
@@ -98,9 +106,15 @@ def uniq_chat_id(id):
 
 class AllChatViewSet(APIView):
     def get(self, request):
-        queryset = Chat.objects.all()
-        serializer_class = AllChatsSerializer(queryset, many=True)
-        return Response(serializer_class.data)
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                queryset = Chat.objects.all()
+                serializer_class = AllChatsSerializer(queryset, many=True)
+                return Response(serializer_class.data)
+            else:
+                return HttpResponse(f'<h1><center>/*TEXT*/</center></h1>')
+        else:
+            return HttpResponse(f'<h1><center>/*TEXT*/</center></h1>')
 
     def post(self, request):
         data = request.data
@@ -112,16 +126,25 @@ class AllChatViewSet(APIView):
                 id = random.randint(100, 500)
                 uniq = uniq_chat_id(id)
 
-            new_chat_main = Chat.objects.create(user_name = data['name'],
-                                           chat_id = id,
-                                           users=User.objects.get(login=data['login'])
-                            )
-            new_chat = Chat.objects.create(user_name = data['login'],
-                                           chat_id = id,
-                                           users=user_login
-                        )
+            new_chat_main = Chat.objects.create(user_name=data['name'],
+                                                chat_id=id,
+                                                users=User.objects.get(login=data['login']))
+            new_chat = Chat.objects.create(user_name=data['login'],
+                                           chat_id=id,
+                                           users=user_login)
             new_chat_main.save()
             new_chat.save()
 
             return JsonResponse({'create': True})
         return HttpResponseNotFound('<p>not user</p>')
+
+
+class AllUsersnameViewSet(APIView):
+    def get(self, request):
+        queryset = User.objects.all()
+        serializer_class = AllUsersSerializer(queryset, many=True)
+        return Response(serializer_class.data)
+
+
+def index(request):
+    return HttpResponse(f'<h1><center>/*TEXT*/</center></h1>')
